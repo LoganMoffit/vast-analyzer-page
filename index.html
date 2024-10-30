@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAST Ad Tag Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+        input, button { width: 100%; margin-top: 10px; padding: 10px; }
+        #output { margin-top: 20px; white-space: pre-wrap; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<h1>VAST Ad Tag Analyzer</h1>
+<p>Enter the full VAST ad tag URL below and click "Analyze" to fetch and parse video/audio bitrate and codec information.</p>
+
+<input type="text" id="vastUrl" placeholder="Paste VAST ad tag URL here...">
+<button onclick="analyzeVAST()">Analyze</button>
+
+<div id="output"></div>
+
+<script>
+    async function analyzeVAST() {
+        const vastUrl = document.getElementById("vastUrl").value.trim();
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "Analyzing...";
+
+        if (!vastUrl) {
+            outputDiv.innerHTML = "Please enter a VAST ad tag URL.";
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/analyze-vast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: vastUrl })
+            });
+
+            if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+
+            const result = await response.json();
+            let output = "Analysis Results:\n\n";
+            result.forEach((media, index) => {
+                output += `Media File ${index + 1}:\nURL: ${media.url}\n`;
+                output += `Video Codec: ${media.analysis.video?.codec || "N/A"}, Bitrate: ${media.analysis.video?.bitrate || "N/A"}\n`;
+                output += `Audio Codec: ${media.analysis.audio?.codec || "N/A"}, Bitrate: ${media.analysis.audio?.bitrate || "N/A"}\n\n`;
+            });
+
+            outputDiv.innerHTML = output;
+        } catch (error) {
+            outputDiv.innerHTML = `Error: ${error.message}`;
+        }
+    }
+</script>
+
+</body>
+</html>
