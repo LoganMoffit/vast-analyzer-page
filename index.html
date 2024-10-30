@@ -6,14 +6,15 @@
     <title>VAST Ad Tag Analyzer</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 20px; }
-        input, button { width: 100%; margin-top: 10px; padding: 10px; }
+        textarea, input { width: 100%; margin-top: 10px; padding: 10px; }
+        button { margin-top: 15px; padding: 10px 20px; cursor: pointer; }
         #output { margin-top: 20px; white-space: pre-wrap; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <h1>VAST Ad Tag Analyzer</h1>
-<p>Enter the full VAST ad tag URL below and click "Analyze" to fetch and parse video/audio bitrate and codec information.</p>
+<p>Paste the full VAST ad tag URL below and click "Analyze" to fetch and parse video/audio bitrate and codec information.</p>
 
 <input type="text" id="vastUrl" placeholder="Paste VAST ad tag URL here...">
 <button onclick="analyzeVAST()">Analyze</button>
@@ -32,7 +33,7 @@
         }
 
         try {
-            const response = await fetch('http://localhost:3000/analyze-vast', {
+            const response = await fetch('https://vast-analyzer-nodejs.onrender.com/analyze-vast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: vastUrl })
